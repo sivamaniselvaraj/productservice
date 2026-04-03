@@ -1,0 +1,40 @@
+server:
+  port: 8084
+
+spring:
+  application:
+    name: ProductService
+  datasource:
+    url: jdbc:mysql://product-mysql:3306/db_product?allowPublicKeyRetrieval=true&useSSL=false
+    username: root
+    password: root
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    database-platform: org.hibernate.dialect.MySQLDialect
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQLDialect
+logging:
+  level:
+    root: INFO
+resilience4j:
+  circuitbreaker:
+    instances:
+      ProductService:
+        failureRateThreshold: 50
+        waitDurationInOpenState: 10s
+        slidingWindowSize: 10
+        permittedNumberOfCallsInHalfOpenState: 3
+        minimumNumberOfCalls: 5
+  ratelimiter:
+    instances:
+      ProductService:
+        limitForPeriod: 10
+        limitRefreshPeriod: 1s
+        timeoutDuration: 0
+        registerHealthIndicator: true
+        eventConsumerBufferSize: 100
+management.health.circuitbreakers.enabled: true
+management.health.ratelimiters.enabled: true

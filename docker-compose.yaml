@@ -1,0 +1,26 @@
+services:
+  product-mysql:
+    image: mysql:8
+    hostname: product-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: db_product
+      MYSQL_PASSWORD: root
+    ports:
+      - "3309:3309"
+    volumes:
+      - product-mysql_data:/var/lib/mysql
+
+  product-service:
+    build: .
+    container_name: product-service
+    ports:
+      - "8084:8084"
+    depends_on:
+      - product-mysql
+    #      - kafka_order
+    environment:
+      - USE_SYSTEM_CA_CERTS=1
+
+volumes:
+  product-mysql_data:
